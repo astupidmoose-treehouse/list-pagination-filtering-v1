@@ -28,72 +28,6 @@ const showPage = (page, list) =>{
 // Call the function with a default of the first page. Default value of 1 for first page.
 showPage(1, list); 
 
-
-// this function creates the needed elements for our buttons. 
-/* 
-const appendPageLinks = (page, list) => {
-
-   // do the math to find out how many pages we will have
-   const buttonsNumber = Math.ceil(list.length / maxItems);
-
-   // create the div to store the buttons
-   const paginationDiv = document.createElement('div');
-
-   // append the div to the div with the "page" class
-   document.querySelector(".page").appendChild(paginationDiv);
-
-   // give the div the "pagination class"
-   paginationDiv.className = "pagination";
-
-   // create the ul element
-   const ul = document.createElement('ul');
-
-   // append the ul to the div
-   paginationDiv.appendChild(ul);
-
-   // for each needed button, run the loop to create buttons
-   for (let i = 0; i < buttonsNumber; i+=1){
-
-      // define the page number, since the array starts at 0, add 1
-      const pageNumber = i + 1;
-
-      // create the li element
-      const li = document.createElement("li");
-
-      // append the li to the ul
-      ul.appendChild(li);
-
-      // create the a element
-      const a = document.createElement("a");
-
-      // append the to a to the li
-      li.appendChild(a);
-
-      // set the content of the button to match the page number
-      a.textContent = pageNumber;
-
-      // if the current page is the selected page, make sure the button is active
-      if (pageNumber === page){
-         a.className = "active";
-      }
-
-      // add a click listener
-      a.addEventListener("click", (e) => {
-         // find all "active" class items, and set them to blank
-         document.querySelector(".active").className = "";
-         // call the function again on the new page number
-         showPage(pageNumber, list);
-         // set the clicked button as the active button
-         event.target.className = "active";
-      })
-   }
-} */
-
-// call the function to create the buttons. Default value of 1 for first page. 
-
-//appendPageLinks(defaultPage, list);
-
-
 function appendPageLinks(list){
    const buttonsNumber = Math.ceil(list.length / maxItems);
 
@@ -122,8 +56,6 @@ function appendPageLinks(list){
       a.textContent = pageNumber;
       document.querySelector("a").className = "active";
 
-      
-
       // add a click listener
       a.addEventListener("click", (e) => {
          // find all "active" class items, and set them to blank
@@ -138,29 +70,45 @@ function appendPageLinks(list){
       })
    }
 };
+
+// Run the appendPageLinks function in order to create the links, passing the list to ensure it uses the list of results. 
 appendPageLinks(list);
-
-
-
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
-
-
-
-
-
 
 // Lets go for exceeding! 
 
+// First, we create a function for finding the results of the input. 
 function searchBarInput(searchInput){
+
+   // define a new array to store the results, empty to start
+   let results = [];
    for (let i = 0; i < list.length; i+=1){
+      // we find if the input is a match in any of the names
       if (searchInput.value !== 0 && names[i].textContent.toLowerCase().includes(searchInput.value.toLowerCase())){
+         // add the result to the earlier defined array, to be used for pagination later on. 
+         results.push(list[i]);
+         // set the display style to nothing, so we can see it. 
          list[i].style.display = "";
+      // if we don't find a match in the list item, hide it.    
       } else {
          list[i].style.display = "none";
       }
    }
+
+   // We need to remove the existing pagination, since we are going to create a new one. 
+   let remove = document.querySelector(".pagination");
+   remove.parentNode.removeChild(remove);
+
+   // call the functions again so the results and pagination are clean. 
+   showPage(1, results);
+   appendPageLinks(results);
+
+   // if there are no results found above, we let the user no there was nothing found. 
+   if (results === undefined || results.length == 0){
+      document.querySelector(".pagination").textContent = "No Results Found";
+   }
 };
 
+// create the searchbar, then add event listeners that look for the input function and process the results accordingly. 
 function searchBar (){
    const searchDiv = document.createElement("div");
    const pageHeaderDiv = document.querySelector(".page-header");
@@ -171,13 +119,16 @@ function searchBar (){
    const searchButton = document.createElement("button");
    searchDiv.appendChild(searchButton).textContent = "Search";  
 
+   // Do searchBarInput function on clicking
    searchButton.addEventListener("click", (e) => {
       searchBarInput(searchInput);
    })
 
+   // Do searchBarInput function on key entry
    searchInput.addEventListener("keyup", (e) => {
       searchBarInput(searchInput);
    })
 }
 
+// Execute the searchbar function to create it. 
 searchBar();
